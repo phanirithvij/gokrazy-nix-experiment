@@ -1,1 +1,5 @@
 .direnv
+builddir
+*.img
+.env
+config.json
