@@ -20,7 +20,33 @@ let
       -i gok --parent_dir gokrazy "$@"
   '';
   gok = lib.getExe gok';
+  commands = [
+    "${gok} new"
+    "${gok} add $@"
+    "${gok} update"
+    "${gok} edit" # should edit template
+    "pkill -3 qemu"
+    ''
+      qemu-system-x86_64 -machine accel=kvm \
+       -smp 8 -m 2048 \
+       -drive file=gokrazy.img,format=raw -nographic \
+       -net nic \
+       -net user,hostfwd=tcp::60080-:80
+    ''
+    "mkfs.ext4 -F -E offset=1157627904 ./gokrazy.img 3063791" # TODO auto extract offsets, how?
+  ];
 in
+# TODO commands
+# - menu
+# - edit
+# - upd
+# - run
+# - build
+# - cheats
+#
+# - gh repo
+# - nix-build -A image -> gokrazy.img (w/ mkfs.ext4 /perm enabled)
+# - nix-build -A run-vm --check -> qemu (see microvm or sth for how to do it w/ simple qemu)
 pkgs.mkShellNoCC {
   shellHook =
     let
